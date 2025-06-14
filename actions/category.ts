@@ -93,7 +93,7 @@ export async function getAllCategories() {
 
     return {
       success: true,
-      data: categories
+      data: JSON.parse(JSON.stringify(categories))
     }
 
   } catch (error) {

@@ -4,9 +4,70 @@ import Image from "next/image"
 import Link from "next/link"
 import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useCart } from "@/lib/cart-context"
+import { CartItem, useCart } from "@/lib/cart-context"
 import { AddressSelector } from "@/components/address-selector"
 import { useState } from "react"
+import { Address } from "@prisma/client"
+
+// 在 Address 接口后添加订单相关类型
+/**
+ * 订单状态
+ */
+export type OrderStatus = 'pending' | 'paid' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled' | 'refunded'
+
+/**
+ * 支付状态
+ */
+export type PaymentStatus = 'unpaid' | 'paying' | 'paid' | 'failed' | 'cancelled' | 'refunded'
+
+/**
+ * 订单商品项
+ */
+export interface OrderItem {
+    id: string
+    name: string
+    brand: string
+    price: number
+    originalPrice?: number
+    imageUrl: string
+    quantity: number
+    subtotal: number
+}
+
+/**
+ * 订单信息
+ */
+export interface Order {
+    id: string
+    orderNumber: string
+    status: OrderStatus
+    paymentStatus: PaymentStatus
+    totalAmount: number
+    deliveryFee: number
+    discountAmount: number
+    finalAmount: number
+    items: OrderItem[]
+    shippingAddress: Address
+    paymentMethod: string
+    deliveryMethod: string
+    orderNote?: string
+    paymentIntentId?: string
+    createdAt: Date
+    updatedAt: Date
+}
+
+/**
+ * 创建订单数据
+ */
+export interface CreateOrderData {
+    items: CartItem[]
+    shippingAddress: Address
+    paymentMethod: string
+    deliveryMethod: string
+    deliveryFee: number
+    discountAmount?: number
+    orderNote?: string
+}
 
 export default function CartPage() {
   const { state, updateQuantity, removeItem, clearCart } = useCart()
@@ -199,6 +260,17 @@ export default function CartPage() {
                       className="mr-2"
                     />
                     <span className="text-sm text-gray-700">支付宝</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="payment"
+                      value="stripe"
+                      checked={selectedPayment === "stripe"}
+                      onChange={(e) => setSelectedPayment(e.target.value)}
+                      className="mr-2"
+                    />
+                    <span className="text-sm text-gray-700">银行卡支付 (Stripe)</span>
                   </label>
                 </div>
               </div>

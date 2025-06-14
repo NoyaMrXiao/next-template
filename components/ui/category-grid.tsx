@@ -2,12 +2,12 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { CategoryItem } from '@/lib/types'
+import { Category } from '@/lib/types'
 import { ArrowRight } from 'lucide-react'
 import { Button } from './button'
 
 interface CategoryGridProps {
-  categories: CategoryItem[]
+  categories: Category[]
 }
 
 export function CategoryGrid({ categories }: CategoryGridProps) {
@@ -44,7 +44,7 @@ export function CategoryGrid({ categories }: CategoryGridProps) {
               
               <div className="space-y-3">
                 <div className="flex flex-wrap gap-2">
-                  {category.subcategories.map((sub, index) => (
+                  {category.subcategories?.map((sub, index) => (
                     <span
                       key={index}
                       className="text-xs bg-white/20 text-white px-2 py-1 rounded-full"

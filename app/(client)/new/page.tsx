@@ -20,6 +20,7 @@ const newProducts = [
       variant: "destructive" as const
     },
     inStock: true,
+    stock: 50,
     category: '香水',
     subcategory: '香水',
     isNew: true,

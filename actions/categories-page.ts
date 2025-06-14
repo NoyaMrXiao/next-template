@@ -32,6 +32,7 @@ export interface ProductWithDetails {
   rating: number
   reviewCount: number
   inStock: boolean
+  stock: number
   isNew: boolean
   isHot: boolean
 }
@@ -283,6 +284,7 @@ function transformProducts(products: any[]): ProductWithDetails[] {
       rating: 4.5 + Math.random() * 0.5, // 模拟评分，实际项目中应该从数据库获取
       reviewCount: Math.floor(Math.random() * 2000) + 100, // 模拟评论数
       inStock: product.stock > 0,
+      stock: product.stock,
       isNew,
       isHot: product.isFeatured || false
     }

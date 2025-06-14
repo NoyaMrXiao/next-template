@@ -158,6 +158,9 @@ model Order {
   // 订单状态
   status          OrderStatus @default(PENDING)
   
+  // 支付方式
+  paymentMethod   PaymentMethod? // 选择的支付方式
+  
   // 物流信息
   shippingMethod  String?     // 配送方式
   trackingNumber  String?     // 快递单号
@@ -236,6 +239,7 @@ enum PaymentMethod {
   WECHAT_PAY  // 微信支付
   ALIPAY      // 支付宝
   BANK_CARD   // 银行卡
+  STRIPE      // Stripe支付
   BALANCE     // 余额支付
 }
 

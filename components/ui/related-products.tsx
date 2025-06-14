@@ -38,6 +38,7 @@ export function RelatedProducts({ currentProduct, relatedProducts }: RelatedProd
     originalPrice: product.originalPrice || undefined,
     imageUrl: product.images[0] || '',
     inStock: product.inStock,
+    stock: 10, // 默认库存值，实际应从数据库获取
     category: product.category.name,
     subcategory: '',
     rating: 0,

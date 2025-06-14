@@ -30,6 +30,9 @@ import { useCart } from "@/lib/cart-context"
 import { useAddress } from "@/hooks/use-address"
 import { AddressSelector } from "@/components/address-selector"
 import toast from 'react-hot-toast'
+import { availableCoupons, paymentMethods } from "@/lib/data/checkout"
+import { deliveryMethods } from "@/lib/data/checkout"
+import { createOrder } from "@/actions/order"
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -49,89 +52,7 @@ export default function CheckoutPage() {
     }
   }, [state.items.length, router])
 
-  // 支付方式
-  const paymentMethods = [
-    { 
-      id: 1, 
-      name: "微信支付", 
-      icon: "💚", 
-      desc: "推荐使用，支持花呗分期",
-      fee: 0,
-      discount: 0
-    },
-    { 
-      id: 2, 
-      name: "支付宝", 
-      icon: "🔵", 
-      desc: "安全便捷，支持余额宝支付",
-      fee: 0,
-      discount: 0.02 // 2%折扣
-    },
-    { 
-      id: 3, 
-      name: "银行卡", 
-      icon: "💳", 
-      desc: "储蓄卡/信用卡，部分银行有优惠",
-      fee: 0,
-      discount: 0
-    }
-  ]
-
-  // 配送方式
-  const deliveryMethods = [
-    { 
-      id: 1, 
-      name: "标准配送", 
-      time: "3-5个工作日", 
-      price: 0, 
-      desc: "免费配送，工作日配送",
-      icon: "📦"
-    },
-    { 
-      id: 2, 
-      name: "次日达", 
-      time: "次日送达", 
-      price: 15, 
-      desc: "加急配送，限工作日下单",
-      icon: "🚚"
-    },
-    { 
-      id: 3, 
-      name: "当日达", 
-      time: "当日送达", 
-      price: 25, 
-      desc: "限部分地区，12点前下单",
-      icon: "⚡"
-    }
-  ]
-
-  // 优惠券数据
-  const availableCoupons = [
-    {
-      id: "WELCOME10",
-      name: "新用户专享",
-      desc: "满199减20",
-      discount: 20,
-      minAmount: 199,
-      type: "amount"
-    },
-    {
-      id: "SAVE5",
-      name: "限时优惠",
-      desc: "全场95折",
-      discount: 0.05,
-      minAmount: 100,
-      type: "percent"
-    },
-    {
-      id: "FREE_SHIP",
-      name: "包邮券",
-      desc: "免配送费",
-      discount: 0,
-      minAmount: 0,
-      type: "shipping"
-    }
-  ]
+  // 获取地址
 
   const selectedAddress = getSelectedAddress()
   const deliveryPrice = deliveryMethods[selectedDelivery].price
@@ -165,22 +86,44 @@ export default function CheckoutPage() {
     setIsSubmitting(true)
 
     try {
-      // 模拟订单提交
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // 准备订单数据
+      const orderData = {
+        items: state.items,
+        shippingAddress: {
+          id: selectedAddress.id,
+          name: selectedAddress.name,
+          phone: selectedAddress.phone,
+          province: selectedAddress.province,
+          city: selectedAddress.city,
+          district: selectedAddress.district,
+          detail: selectedAddress.detailAddress
+        },
+        paymentMethod: paymentMethods[selectedPayment].name,
+        deliveryMethod: deliveryMethods[selectedDelivery].name,
+        deliveryFee: finalDeliveryPrice,
+        discountAmount: couponDiscount + paymentDiscountAmount,
+        orderNote: orderNote || undefined,
+        userId: 1 // TODO: 从用户上下文获取真实用户ID
+      }
+
+      // 创建订单
+      const result = await createOrder(orderData)
       
-      // 生成订单号
-      const orderNumber = `ORD${Date.now()}${Math.random().toString(36).substr(2, 4).toUpperCase()}`
-      
-      toast.success('订单提交成功！')
-      
-      // 清空购物车
-      clearCart()
-      
-      // 跳转到订单成功页面
-      router.push(`/order-success?orderNumber=${orderNumber}`)
+      if (result.success && result.data) {
+        toast.success('订单创建成功！')
+        
+        // 清空购物车
+        clearCart()
+        
+        // 跳转到订单详情或支付页面
+        router.push(`/order-success?orderNumber=${result.data.orderNo}&orderId=${result.data.orderId}`)
+      } else {
+        toast.error(result.error || '创建订单失败')
+      }
       
     } catch (error) {
       toast.error('订单提交失败，请重试')
+      console.error('订单提交错误:', error)
     } finally {
       setIsSubmitting(false)
     }

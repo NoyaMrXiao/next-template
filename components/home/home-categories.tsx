@@ -2,9 +2,10 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { CategoryGrid } from "@/components/ui/category-grid"
 import { ArrowRight } from "lucide-react"
+import type { Category } from "@/lib/types"
 
 interface HomeCategoriesProps {
-  categories: any[]
+  categories: Category[]
 }
 
 export function HomeCategories({ categories }: HomeCategoriesProps) {
