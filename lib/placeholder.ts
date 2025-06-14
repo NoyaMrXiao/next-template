@@ -1,0 +1,15 @@
+// 默认占位符图片 - 内联SVG，避免网络请求
+export const PLACEHOLDER_IMAGE = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDQwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNzUgMTUwSDIyNVYyNTBIMTc1VjE1MFoiIGZpbGw9IiM5Q0EzQUYiLz4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxODAiIHk9IjE4MCI+CjxwYXRoIGQ9Ik0yMS4yNSAySDIuNzVDMS43ODM1IDIgMSAyLjc4MzUgMSAzLjc1VjIwLjI1QzEgMjEuMjE2NSAxLjc4MzUgMjIgMi43NSAyMkgyMS4yNUMyMi4yMTY1IDIyIDIzIDIxLjIxNjUgMjMgMjAuMjVWMy43NUMyMyAyLjc4MzUgMjIuMjE2NSAyIDIxLjI1IDJaIiBzdHJva2U9IiM5Q0EzQUYiIHN0cm9rZS13aWR0aD0iMS41IiBmaWxsPSJub25lIi8+CjxwYXRoIGQ9Ik0xNiAxMUMxNyAxMSAxOCAxMCAxOCA5QzE4IDggMTcgNyAxNiA3QzE1IDcgMTQgOCAxNCA5QzE0IDEwIDE1IDExIDE2IDExWiIgZmlsbD0iIzlDQTNBRiIvPgo8cGF0aCBkPSJNMjMgMTZMMTggMTFMMTMgMTZIMjNaIiBmaWxsPSIjOUNBM0FGIi8+CjxwYXRoIGQ9Ik0xIDIyTDYgMTdMMTEgMjJIMVoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+Cjwvc3ZnPgo='
+
+// 图片错误处理函数
+export const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+  const target = e.target as HTMLImageElement
+  if (target.src !== PLACEHOLDER_IMAGE) {
+    target.src = PLACEHOLDER_IMAGE
+  }
+}
+
+// 获取安全的图片URL
+export const getSafeImageUrl = (imageUrl?: string | null): string => {
+  return imageUrl && imageUrl.trim() !== '' ? imageUrl : PLACEHOLDER_IMAGE
+} 

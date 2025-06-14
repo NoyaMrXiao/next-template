@@ -12,10 +12,238 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Example data model
+// 用户模型
 model User {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   email     String   @unique
   name      String?
+  phone     String?
+  avatar    String?
+  password  String?  // 密码哈希值
+  
+  // 地址
+  addresses Address[]
+  
+  // 订单
+  orders    Order[]
+  
+  // 购物车
+  cartItems CartItem[]
+  
+  @@map("users")
+}
+
+// 地址模型
+model Address {
+  id         Int     @id @default(autoincrement())
+  userId     Int
+  name       String  // 收货人姓名
+  phone      String  // 收货人电话
+  province   String  // 省份
+  city       String  // 城市
+  district   String  // 区/县
+  detail     String  // 详细地址
+  postcode   String? // 邮编
+  isDefault  Boolean @default(false) // 是否为默认地址
+  
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders Order[]
+  
+  @@map("addresses")
+}
+
+// 商品大分类
+model Category {
+  id            Int           @id @default(autoincrement())
+  name          String        @unique // 如：香水类、家居香氛类
+  description   String?
+  image         String?
+  sort          Int           @default(0) // 排序
+  isActive      Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  subcategories Subcategory[]
+  products      Product[]
+  
+  @@map("categories")
+}
+
+// 商品子分类
+model Subcategory {
+  id          Int      @id @default(autoincrement())
+  categoryId  Int
+  name        String   // 如：香精（Parfum）、淡香精（Eau de Parfum）
+  description String?
+  image       String?
+  sort        Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  category Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  products Product[]
+  
+  @@unique([categoryId, name])
+  @@map("subcategories")
+}
+
+// 商品模型
+model Product {
+  id            Int         @id @default(autoincrement())
+  categoryId    Int
+  subcategoryId Int?
+  name          String      // 商品名称
+  description   String?     // 商品描述
+  content       String?     // 商品详情（富文本）
+  brand         String?     // 品牌
+  sku           String      @unique // 商品编码
+  price         Decimal     @db.Decimal(10, 2) // 价格
+  originalPrice Decimal?    @db.Decimal(10, 2) // 原价
+  stock         Int         @default(0) // 库存
+  minStock      Int         @default(0) // 最低库存预警
+  weight        Decimal?    @db.Decimal(8, 3) // 重量（kg）
+  volume        String?     // 容量/规格
+  images        String[]    // 商品图片URL数组
+  tags          String[]    // 标签
+  isActive      Boolean     @default(true)
+  isFeatured    Boolean     @default(false) // 是否精选
+  sort          Int         @default(0)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  category    Category     @relation(fields: [categoryId], references: [id])
+  subcategory Subcategory? @relation(fields: [subcategoryId], references: [id])
+  
+  // 订单项
+  orderItems OrderItem[]
+  
+  // 购物车项
+  cartItems CartItem[]
+  
+  @@map("products")
+}
+
+// 购物车项
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  productId Int
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, productId])
+  @@map("cart_items")
+}
+
+// 订单模型
+model Order {
+  id              Int         @id @default(autoincrement())
+  orderNo         String      @unique // 订单号
+  userId          Int
+  addressId       Int
+  
+  // 订单金额
+  subtotal        Decimal     @db.Decimal(10, 2) // 商品小计
+  shippingFee     Decimal     @default(0) @db.Decimal(10, 2) // 运费
+  discountAmount  Decimal     @default(0) @db.Decimal(10, 2) // 优惠金额
+  totalAmount     Decimal     @db.Decimal(10, 2) // 总金额
+  
+  // 订单状态
+  status          OrderStatus @default(PENDING)
+  
+  // 物流信息
+  shippingMethod  String?     // 配送方式
+  trackingNumber  String?     // 快递单号
+  shippedAt       DateTime?   // 发货时间
+  deliveredAt     DateTime?   // 送达时间
+  
+  // 备注
+  remark          String?     // 用户备注
+  adminRemark     String?     // 管理员备注
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  user      User        @relation(fields: [userId], references: [id])
+  address   Address     @relation(fields: [addressId], references: [id])
+  
+  // 订单项
+  orderItems OrderItem[]
+  
+  // 支付记录
+  payments   Payment[]
+  
+  @@map("orders")
+}
+
+// 订单状态枚举
+enum OrderStatus {
+  PENDING    // 待付款
+  PAID       // 已付款
+  SHIPPED    // 已发货
+  DELIVERED  // 已送达
+  COMPLETED  // 已完成
+  CANCELLED  // 已取消
+  REFUNDED   // 已退款
+}
+
+// 订单项
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+  price     Decimal @db.Decimal(10, 2) // 下单时的商品价格
+  totalPrice Decimal @db.Decimal(10, 2) // 小计（price * quantity）
+  
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+  
+  @@map("order_items")
+}
+
+// 支付记录
+model Payment {
+  id            Int           @id @default(autoincrement())
+  orderId       Int
+  paymentNo     String        @unique // 支付流水号
+  amount        Decimal       @db.Decimal(10, 2) // 支付金额
+  method        PaymentMethod // 支付方式
+  status        PaymentStatus @default(PENDING) // 支付状态
+  
+  // 第三方支付信息
+  thirdPartyId  String?       // 第三方支付ID
+  thirdPartyNo  String?       // 第三方支付流水号
+  
+  paidAt        DateTime?     // 支付完成时间
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  order Order @relation(fields: [orderId], references: [id])
+  
+  @@map("payments")
+}
+
+// 支付方式枚举
+enum PaymentMethod {
+  WECHAT_PAY  // 微信支付
+  ALIPAY      // 支付宝
+  BANK_CARD   // 银行卡
+  BALANCE     // 余额支付
+}
+
+// 支付状态枚举
+enum PaymentStatus {
+  PENDING   // 待支付
+  SUCCESS   // 支付成功
+  FAILED    // 支付失败
+  CANCELLED // 已取消
+  REFUNDED  // 已退款
 }
