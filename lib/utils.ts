@@ -22,7 +22,7 @@ export function cn(...inputs: ClassValue[]) {
  * 格式化价格显示
  */
 export function formatPrice(price: number): string {
-  return `¥${price.toFixed(2)}`
+  return `¥${price}`
 }
 
 /**

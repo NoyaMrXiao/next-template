@@ -17,14 +17,6 @@ export const paymentMethods = [
     discount: 0.02 // 2%折扣
   },
   { 
-    id: 3, 
-    name: "银行卡", 
-    icon: "💳", 
-    desc: "储蓄卡/信用卡，部分银行有优惠",
-    fee: 0,
-    discount: 0
-  },
-  { 
     id: 4, 
     name: "Stripe支付", 
     icon: "🔷", 

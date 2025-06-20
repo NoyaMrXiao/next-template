@@ -4,8 +4,9 @@ import { RelatedProducts } from "@/components/ui/related-products"
 import { getProductDetail, getRelatedProducts } from "@/actions/product-detail"
 import { notFound } from 'next/navigation'
 
-export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  console.log(id)
   const productId = parseInt(id)
 
   // 验证ID是否为有效数字
@@ -28,9 +29,9 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   const relatedProducts = relatedProductsResult.success ? relatedProductsResult.data || [] : []
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       {/* 面包屑导航 */}
-      <div className="bg-white border-b border-gray-100">
+      <div className="border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center space-x-2 text-xs text-gray-500">
             <Link href="/" className="hover:text-gray-900 transition-colors">Home</Link>
@@ -38,19 +39,19 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
             <Link href="/categories/all" className="hover:text-gray-900 transition-colors">All Categories</Link>
             <span>/</span>
             <Link 
-              href={`/categories/all?category=${encodeURIComponent(product.category.name)}`} 
+              href={`/categories/all?category=${encodeURIComponent(product.name)}`} 
               className="hover:text-gray-900 transition-colors"
             >
-              {product.category.name}
+              {product.name}
             </Link>
-            {product.subcategory && (
+            {product.subcategoryId && (
               <>
                 <span>/</span>
                 <Link 
-                  href={`/categories/all?category=${encodeURIComponent(product.category.name)}&subcategory=${encodeURIComponent(product.subcategory.name)}`}
+                    href={`/categories/all?category=${encodeURIComponent(product.name)}&subcategory=${encodeURIComponent(product.name)}`}
                   className="hover:text-gray-900 transition-colors"
                 >
-                  {product.subcategory.name}
+                  {product.name}
                 </Link>
               </>
             )}

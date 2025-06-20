@@ -38,7 +38,7 @@ export default function FavoritesPage() {
 
   if (favoritesState.items.length === 0) {
     return (
-      <div className="min-h-screen bg-white pt-20">
+      <div className="min-h-screen pt-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
             <div className="w-32 h-32 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-8">

@@ -57,7 +57,6 @@ export default async function AllCategoriesPage({
           <h2 className="text-2xl font-bold text-gray-900 mb-4">加载失败</h2>
           <p className="text-gray-600 mb-6">{result.error || '获取数据失败，请稍后重试'}</p>
           <button 
-            onClick={() => window.location.reload()} 
             className="px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors"
           >
             重新加载

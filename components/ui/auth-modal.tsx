@@ -5,7 +5,7 @@ import { Button } from "./button"
 import { Card, CardContent, CardHeader, CardTitle } from "./card"
 import { Input } from "./input"
 import { Label } from "./label"
-import { X, Eye, EyeOff, Mail, Lock, User, Phone, AlertCircle, CheckCircle } from "lucide-react"
+import { X, Eye, EyeOff, Mail, Lock, User, Phone, AlertCircle } from "lucide-react"
 import { registerUser, loginUser, RegisterData, LoginData } from "@/actions/auth"
 import { useAuth } from "@/lib/auth-context"
 import { validateEmail, validatePassword, validatePhone, validateUsername } from "@/lib/validation"
@@ -23,13 +23,13 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
-  
+
   const [loginForm, setLoginForm] = useState({
     email: '',
     password: '',
     rememberMe: false
   })
-  
+
   const [registerForm, setRegisterForm] = useState({
     username: '',
     email: '',
@@ -68,7 +68,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
   // 实时验证函数
   const validateField = (field: string, value: string, form: 'login' | 'register') => {
     const newErrors = { ...errors }
-    
+
     switch (field) {
       case 'email':
         if (!value) {
@@ -79,7 +79,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
           delete newErrors.email
         }
         break
-        
+
       case 'password':
         if (!value) {
           newErrors.password = '请输入密码'
@@ -94,7 +94,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
           delete newErrors.password
         }
         break
-        
+
       case 'username':
         if (!value) {
           newErrors.username = '请输入用户名'
@@ -107,7 +107,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
           }
         }
         break
-        
+
       case 'phone':
         if (!value) {
           newErrors.phone = '请输入手机号'
@@ -117,7 +117,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
           delete newErrors.phone
         }
         break
-        
+
       case 'confirmPassword':
         if (!value) {
           newErrors.confirmPassword = '请确认密码'
@@ -128,7 +128,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
         }
         break
     }
-    
+
     setErrors(newErrors)
   }
 
@@ -139,7 +139,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
 
     try {
       const result = await loginUser(loginForm as LoginData)
-      
+
       if (result.success && result.user) {
         setUser(result.user)
         await refreshUser()
@@ -171,7 +171,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
 
     try {
       const result = await registerUser(registerForm as RegisterData)
-      
+
       if (result.success && result.user) {
         setUser(result.user)
         await refreshUser()
@@ -192,11 +192,11 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* 背景遮罩 */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
-      
+
       {/* 模态框内容 */}
       <Card className="relative w-full max-w-md mx-4 bg-white shadow-2xl">
         <CardHeader className="relative pb-4">
@@ -208,29 +208,27 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
           >
             <X className="h-4 w-4" />
           </Button>
-          
+
           <CardTitle className="text-center text-2xl font-bold text-gray-900 mt-2">
             {activeTab === 'login' ? '登录账户' : '注册账户'}
           </CardTitle>
-          
+
           {/* 标签切换 */}
-          <div className="flex bg-gray-100 rounded-lg p-1 mt-4">
+          <div className="flex bg-gray-100 rounded-none p-1 mt-4">
             <button
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
-                activeTab === 'login'
-                  ? 'bg-white text-rose-600 shadow-sm'
+              className={`flex-1 py-2 px-4 rounded-none text-sm font-medium transition-all ${activeTab === 'login'
+                  ? 'bg-white text-black/90 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
-              }`}
+                }`}
               onClick={() => setActiveTab('login')}
             >
               登录
             </button>
             <button
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
-                activeTab === 'register'
-                  ? 'bg-white text-rose-600 shadow-sm'
+              className={`flex-1 py-2 px-4 rounded-none text-sm font-medium transition-all ${activeTab === 'register'
+                  ? 'bg-white text-black/90 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
-              }`}
+                }`}
               onClick={() => setActiveTab('register')}
             >
               注册
@@ -241,7 +239,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
         <CardContent className="pt-0">
           {/* 通用错误提示 */}
           {errors.general && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center space-x-2">
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-none flex items-center space-x-2">
               <AlertCircle className="h-4 w-4 text-red-500" />
               <span className="text-sm text-red-600">{errors.general}</span>
             </div>
@@ -302,22 +300,22 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
 
               <div className="flex items-center justify-between text-sm">
                 <label className="flex items-center">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     className="mr-2"
                     checked={loginForm.rememberMe}
                     onChange={(e) => setLoginForm({ ...loginForm, rememberMe: e.target.checked })}
                   />
                   记住我
                 </label>
-                <button type="button" className="text-rose-600 hover:text-rose-700">
+                <button type="button" className="text-black/90 hover:text-black/100">
                   忘记密码？
                 </button>
               </div>
 
-              <Button 
-                type="submit" 
-                className="w-full bg-rose-600 hover:bg-rose-700"
+              <Button
+                type="submit"
+                className="w-full bg-black/90 hover:bg-black/100"
                 disabled={isLoading}
               >
                 {isLoading ? '登录中...' : '登录'}
@@ -327,7 +325,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
                 还没有账户？
                 <button
                   type="button"
-                  className="text-rose-600 hover:text-rose-700 ml-1"
+                  className="text-black/90 hover:text-black/100 ml-1"
                   onClick={() => setActiveTab('register')}
                 >
                   立即注册
@@ -462,32 +460,32 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
 
               <div className="text-sm">
                 <label className="flex items-start">
-                  <input 
-                    type="checkbox" 
-                    className="mr-2 mt-1" 
+                  <input
+                    type="checkbox"
+                    className="mr-2 mt-1"
                     checked={registerForm.agreeToTerms}
                     onChange={(e) => setRegisterForm({ ...registerForm, agreeToTerms: e.target.checked })}
-                    required 
+                    required
                   />
                   <span className="text-gray-600">
                     我已阅读并同意
-                    <button type="button" className="text-rose-600 hover:text-rose-700 mx-1">
+                    <button type="button" className="text-black/90 hover:text-black/100 mx-1">
                       用户协议
                     </button>
                     和
-                    <button type="button" className="text-rose-600 hover:text-rose-700 mx-1">
+                    <button type="button" className="text-black/90 hover:text-black/100 mx-1">
                       隐私政策
                     </button>
                   </span>
                 </label>
                 {errors.agreeToTerms && (
-                  <p className="text-xs text-red-600 mt-1">{errors.agreeToTerms}</p>
+                  <p className="text-xs text-black/90 mt-1">{errors.agreeToTerms}</p>
                 )}
               </div>
 
-              <Button 
-                type="submit" 
-                className="w-full bg-rose-600 hover:bg-rose-700"
+              <Button
+                type="submit"
+                className="w-full bg-black/90 hover:bg-black/100"
                 disabled={isLoading}
               >
                 {isLoading ? '注册中...' : '注册'}
@@ -497,7 +495,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
                 已有账户？
                 <button
                   type="button"
-                  className="text-rose-600 hover:text-rose-700 ml-1"
+                  className="text-black/90 hover:text-black/100 ml-1"
                   onClick={() => setActiveTab('login')}
                 >
                   立即登录

@@ -54,10 +54,10 @@ export function AddressSelector({ className }: AddressSelectorProps) {
     return (
       <div className={className}>
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded mb-4"></div>
+          <div className="h-6 bg-gray-200 rounded-none mb-4"></div>
           <div className="space-y-3">
             {[1, 2].map((i) => (
-              <div key={i} className="h-16 bg-gray-100 rounded"></div>
+              <div key={i} className="h-16 bg-gray-100 rounded-none"></div>
             ))}
           </div>
         </div>
@@ -94,9 +94,9 @@ export function AddressSelector({ className }: AddressSelectorProps) {
           return (
             <div
               key={address.id}
-              className={`p-4 rounded-lg border cursor-pointer transition-all duration-200 ${
+              className={`p-4 rounded-none border cursor-pointer transition-all duration-200 ${
                 isSelected
-                  ? 'border-gray-900 bg-gray-50'
+                  ? 'border-gray-900 bg-primary'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
               onClick={() => selectAddress(address.id)}

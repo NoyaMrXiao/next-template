@@ -3,8 +3,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Category } from '@/lib/types'
-import { ArrowRight } from 'lucide-react'
-import { Button } from './button'
 
 interface CategoryGridProps {
   categories: Category[]
@@ -12,57 +10,39 @@ interface CategoryGridProps {
 
 export function CategoryGrid({ categories }: CategoryGridProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
       {categories.map((category) => (
         <Link
           key={category.id}
           href={`/categories/all?category=${encodeURIComponent(category.name)}`}
-          className="block"
+          className="group block"
         >
-          <div className="group relative overflow-hidden rounded-lg aspect-[4/3] cursor-pointer">
-            {/* 背景图片 */}
-            <Image
-              src={category.imageUrl}
-              alt={category.name}
-              fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-            />
+          <div className="space-y-4">
+            {/* 图片区域 - 极简设计 */}
+            <div className="relative aspect-square overflow-hidden bg-gray-50">
+              <Image
+                src={category.imageUrl}
+                alt={category.name}
+                fill
+                className="object-cover transition-all duration-500 group-hover:scale-105"
+              />
+              
+              {/* 极简遮罩 - 仅在悬浮时显示 */}
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
+            </div>
             
-            {/* 渐变遮罩 */}
-            <div className={`absolute inset-0 ${category.gradient} opacity-60 group-hover:opacity-70 transition-opacity duration-300`} />
-            
-            {/* 内容 */}
-            <div className="absolute inset-0 p-6 flex flex-col justify-between">
-              <div>
-                <h3 className="text-xl font-semibold text-white mb-2">
-                  {category.name}
-                </h3>
-                <p className="text-sm text-white/80">
+            {/* 文字内容 - 极简排版 */}
+            <div className="text-center space-y-2">
+              <h3 className="text-lg font-light text-gray-900 group-hover:text-gray-700 transition-colors duration-300">
+                {category.name}
+              </h3>
+              
+              {/* 可选：显示商品数量或简短描述 */}
+              {category.description && (
+                <p className="text-sm text-gray-500 font-light">
                   {category.description}
                 </p>
-              </div>
-              
-              <div className="space-y-3">
-                <div className="flex flex-wrap gap-2">
-                  {category.subcategories?.map((sub, index) => (
-                    <span
-                      key={index}
-                      className="text-xs bg-white/20 text-white px-2 py-1 rounded-full"
-                    >
-                      {sub}
-                    </span>
-                  ))}
-                </div>
-                
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-white hover:text-white hover:bg-white/20 w-full justify-between pointer-events-none"
-                >
-                  查看详情
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              </div>
+              )}
             </div>
           </div>
         </Link>

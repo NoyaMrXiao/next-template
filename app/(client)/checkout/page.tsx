@@ -4,14 +4,14 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { 
-  ArrowLeft, 
-  Package, 
-  MapPin, 
-  Truck, 
-  CreditCard, 
-  Shield, 
-  Clock, 
+import {
+  ArrowLeft,
+  Package,
+  MapPin,
+  Truck,
+  CreditCard,
+  Shield,
+  Clock,
   CheckCircle,
   AlertCircle,
   Gift,
@@ -38,7 +38,7 @@ export default function CheckoutPage() {
   const router = useRouter()
   const { state, clearCart } = useCart()
   const { getSelectedAddress } = useAddress()
-  
+
   const [selectedPayment, setSelectedPayment] = useState(0)
   const [selectedDelivery, setSelectedDelivery] = useState(0)
   const [orderNote, setOrderNote] = useState("")
@@ -57,7 +57,7 @@ export default function CheckoutPage() {
   const selectedAddress = getSelectedAddress()
   const deliveryPrice = deliveryMethods[selectedDelivery].price
   const paymentDiscount = paymentMethods[selectedPayment].discount || 0
-  
+
   // 计算优惠
   let couponDiscount = 0
   if (selectedCoupon) {
@@ -108,19 +108,19 @@ export default function CheckoutPage() {
 
       // 创建订单
       const result = await createOrder(orderData)
-      
+
       if (result.success && result.data) {
         toast.success('订单创建成功！')
-        
+
         // 清空购物车
         clearCart()
-        
+
         // 跳转到订单详情或支付页面
         router.push(`/order-success?orderNumber=${result.data.orderNo}&orderId=${result.data.orderId}`)
       } else {
         toast.error(result.error || '创建订单失败')
       }
-      
+
     } catch (error) {
       toast.error('订单提交失败，请重试')
       console.error('订单提交错误:', error)
@@ -134,63 +134,31 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-rose-50">
+    <div className="min-h-screen bg-primary">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* 页面标题 */}
-        <div className="mb-8">
-          <div className="flex items-center space-x-4 mb-4">
-            <Link href="/cart">
-              <Button variant="ghost" size="icon" className="hover:bg-gray-100">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900">确认订单</h1>
-              <p className="text-gray-600 mt-1">请仔细核对订单信息，确认无误后提交订单</p>
-            </div>
-          </div>
-          
-          {/* 订单进度 */}
-          <div className="flex items-center space-x-4 text-sm">
-            <div className="flex items-center text-gray-400">
-              <Package className="w-4 h-4 mr-1" />
-              购物车
-            </div>
-            <div className="w-8 h-px bg-gray-300"></div>
-            <div className="flex items-center text-rose-500 font-medium">
-              <CheckCircle className="w-4 h-4 mr-1" />
-              确认订单
-            </div>
-            <div className="w-8 h-px bg-gray-300"></div>
-            <div className="flex items-center text-gray-400">
-              <CreditCard className="w-4 h-4 mr-1" />
-              支付完成
-            </div>
-          </div>
-        </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           {/* 左侧内容 */}
           <div className="xl:col-span-2 space-y-6">
             {/* 商品清单 */}
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-md bg-primary/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center text-lg">
-                  <Package className="w-5 h-5 mr-2 text-rose-500" />
+                  <Package className="w-5 h-5 mr-2 text-black/90" />
                   商品清单 ({state.totalItems}件)
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {state.items.map((item, index) => (
-                  <div key={item.id} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+                  <div key={item.id} className="flex items-center space-x-4 p-4 bg-primary/50 hover:bg-primary/70 transition-colors duration-200">
                     <div className="relative w-16 h-16 flex-shrink-0">
                       <Image
                         src={item.imageUrl}
                         alt={item.name}
                         fill
-                        className="object-cover rounded-md"
+                        className="object-cover"
                       />
-                      <Badge className="absolute -top-2 -right-2 bg-rose-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center">
+                      <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-black/90 to-black/90 text-white text-xs min-w-[20px] h-5 flex items-center justify-center">
                         {item.quantity}
                       </Badge>
                     </div>
@@ -198,7 +166,7 @@ export default function CheckoutPage() {
                       <h4 className="font-medium text-gray-900 truncate">{item.name}</h4>
                       <p className="text-sm text-gray-500">{item.brand}</p>
                       <div className="flex items-center space-x-2 mt-1">
-                        <span className="text-rose-500 font-semibold">¥{item.price}</span>
+                        <span className="text-black/90 font-semibold">¥{item.price}</span>
                         {item.originalPrice && (
                           <span className="text-gray-400 line-through text-sm">¥{item.originalPrice}</span>
                         )}
@@ -217,59 +185,11 @@ export default function CheckoutPage() {
             {/* 收货地址 */}
             <AddressSelector />
 
-            {/* 配送方式 */}
-            <Card className="border-0 shadow-md">
-              <CardHeader>
-                <CardTitle className="flex items-center text-lg">
-                  <Truck className="w-5 h-5 mr-2 text-rose-500" />
-                  配送方式
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {deliveryMethods.map((method, index) => (
-                  <div
-                    key={method.id}
-                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
-                      selectedDelivery === index
-                        ? 'border-rose-500 bg-rose-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                    onClick={() => setSelectedDelivery(index)}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className={`w-4 h-4 rounded-full border-2 ${
-                          selectedDelivery === index
-                            ? 'border-rose-500 bg-rose-500'
-                            : 'border-gray-300'
-                        }`}>
-                          {selectedDelivery === index && (
-                            <div className="w-2 h-2 bg-white rounded-full m-0.5"></div>
-                          )}
-                        </div>
-                        <span className="text-xl">{method.icon}</span>
-                        <div>
-                          <div className="flex items-center space-x-2">
-                            <span className="font-semibold text-gray-900">{method.name}</span>
-                            <span className="text-sm text-gray-500">({method.time})</span>
-                          </div>
-                          <p className="text-sm text-gray-600">{method.desc}</p>
-                        </div>
-                      </div>
-                      <span className="font-semibold text-gray-900">
-                        {method.price === 0 ? '免费' : `¥${method.price}`}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
             {/* 支付方式 */}
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-md bg-primary/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center text-lg">
-                  <CreditCard className="w-5 h-5 mr-2 text-rose-500" />
+                  <CreditCard className="w-5 h-5 mr-2 text-black/90" />
                   支付方式
                 </CardTitle>
               </CardHeader>
@@ -277,20 +197,18 @@ export default function CheckoutPage() {
                 {paymentMethods.map((method, index) => (
                   <div
                     key={method.id}
-                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
-                      selectedPayment === index
-                        ? 'border-rose-500 bg-rose-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
+                    className={`p-4 border-2 cursor-pointer transition-all duration-200 ${selectedPayment === index
+                      ? 'border-black/90 bg-black/90/50 backdrop-blur-sm'
+                      : 'border-gray-200 hover:border-gray-300 bg-white/50'
+                      }`}
                     onClick={() => setSelectedPayment(index)}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <div className={`w-4 h-4 rounded-full border-2 ${
-                          selectedPayment === index
-                            ? 'border-rose-500 bg-rose-500'
-                            : 'border-gray-300'
-                        }`}>
+                        <div className={`w-4 h-4 border-2 ${selectedPayment === index
+                          ? 'border-black/90 bg-gradient-to-r from-black/90 to-black/90'
+                          : 'border-gray-300'
+                          }`}>
                           {selectedPayment === index && (
                             <div className="w-2 h-2 bg-white rounded-full m-0.5"></div>
                           )}
@@ -300,7 +218,7 @@ export default function CheckoutPage() {
                           <div className="flex items-center space-x-2">
                             <span className="font-semibold text-gray-900">{method.name}</span>
                             {method.discount > 0 && (
-                              <Badge variant="secondary" className="text-xs">
+                              <Badge variant="secondary" className="text-xs bg-gradient-to-r from-black/90/10 to-black/90/10 text-black/90">
                                 {(method.discount * 100).toFixed(0)}%优惠
                               </Badge>
                             )}
@@ -315,10 +233,10 @@ export default function CheckoutPage() {
             </Card>
 
             {/* 优惠券 */}
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-md bg-primary/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center text-lg">
-                  <Gift className="w-5 h-5 mr-2 text-rose-500" />
+                  <Gift className="w-5 h-5 mr-2 text-black/90" />
                   优惠券
                 </CardTitle>
               </CardHeader>
@@ -326,38 +244,36 @@ export default function CheckoutPage() {
                 {availableCoupons.map((coupon) => {
                   const canUse = state.totalPrice >= coupon.minAmount
                   const isSelected = selectedCoupon === coupon.id
-                  
+
                   return (
                     <div
                       key={coupon.id}
-                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
-                        isSelected
-                          ? 'border-rose-500 bg-rose-50'
-                          : canUse 
-                            ? 'border-gray-200 hover:border-gray-300'
-                            : 'border-gray-100 bg-gray-50 cursor-not-allowed'
-                      }`}
+                      className={`p-4 border-2 cursor-pointer transition-all duration-200 ${isSelected
+                        ? 'border-black/90 bg-black/90/50 backdrop-blur-sm'
+                        : canUse
+                          ? 'border-gray-200 hover:border-gray-300 bg-white/50'
+                          : 'border-gray-100 bg-gray-50/50 cursor-not-allowed'
+                        }`}
                       onClick={() => canUse && setSelectedCoupon(isSelected ? null : coupon.id)}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
-                          <div className={`w-4 h-4 rounded-full border-2 ${
-                            isSelected
-                              ? 'border-rose-500 bg-rose-500'
-                              : 'border-gray-300'
-                          }`}>
+                          <div className={`w-4 h-4 border-2 ${isSelected
+                            ? 'border-black/90 bg-gradient-to-r from-black/90 to-black/90'
+                            : 'border-gray-300'
+                            }`}>
                             {isSelected && (
                               <div className="w-2 h-2 bg-white rounded-full m-0.5"></div>
                             )}
                           </div>
-                          <Tag className={`w-4 h-4 ${canUse ? 'text-orange-500' : 'text-gray-400'}`} />
+                          <Tag className={`w-4 h-4 ${canUse ? 'text-black/90' : 'text-gray-400'}`} />
                           <div>
                             <div className="flex items-center space-x-2">
                               <span className={`font-semibold ${canUse ? 'text-gray-900' : 'text-gray-400'}`}>
                                 {coupon.name}
                               </span>
                               {!canUse && (
-                                <Badge variant="outline" className="text-xs text-gray-400">
+                                <Badge variant="outline" className="text-xs text-gray-400 border-gray-200">
                                   不满足条件
                                 </Badge>
                               )}
@@ -375,10 +291,10 @@ export default function CheckoutPage() {
             </Card>
 
             {/* 订单备注 */}
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-md bg-primary/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center text-lg">
-                  <FileText className="w-5 h-5 mr-2 text-rose-500" />
+                  <FileText className="w-5 h-5 mr-2 text-black/90" />
                   订单备注
                 </CardTitle>
               </CardHeader>
@@ -391,7 +307,7 @@ export default function CheckoutPage() {
                   value={orderNote}
                   onChange={(e) => setOrderNote(e.target.value)}
                   placeholder="例如：请在工作日配送、放在门卫处等"
-                  className="resize-none"
+                  className="resize-none bg-white/50 border-gray-200 focus:border-black/90 focus:ring-black/90/20 rounded-none"
                   rows={3}
                 />
               </CardContent>
@@ -402,10 +318,10 @@ export default function CheckoutPage() {
           <div className="xl:col-span-1">
             <div className="sticky top-8 space-y-6">
               {/* 订单摘要 */}
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-gray-50">
+              <Card className="border-0 shadow-lg bg-primary/50 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center text-xl">
-                    <Package className="w-5 h-5 mr-2 text-rose-500" />
+                    <Package className="w-5 h-5 mr-2 text-black/90" />
                     订单摘要
                   </CardTitle>
                 </CardHeader>
@@ -425,28 +341,28 @@ export default function CheckoutPage() {
                         {finalDeliveryPrice === 0 ? '免费' : `¥${finalDeliveryPrice}`}
                       </span>
                     </div>
-                    
+
                     {/* 优惠明细 */}
                     {couponDiscount > 0 && (
-                      <div className="flex justify-between items-center text-green-600">
+                      <div className="flex justify-between items-center text-black/90">
                         <span>优惠券优惠</span>
                         <span>-¥{couponDiscount.toFixed(2)}</span>
                       </div>
                     )}
-                    
+
                     {paymentDiscountAmount > 0 && (
-                      <div className="flex justify-between items-center text-green-600">
+                      <div className="flex justify-between items-center text-black/90">
                         <span>支付优惠</span>
                         <span>-¥{paymentDiscountAmount.toFixed(2)}</span>
                       </div>
                     )}
-                    
-                    <Separator />
-                    
+
+                    <Separator className="bg-black/10" />
+
                     <div className="flex justify-between items-center">
                       <span className="text-lg font-bold text-gray-900">应付总额</span>
                       <div className="text-right">
-                        <span className="text-2xl font-bold text-rose-500">
+                        <span className="text-2xl font-bold text-black/90">
                           ¥{totalPrice.toFixed(2)}
                         </span>
                         <p className="text-xs text-gray-500">含税</p>
@@ -455,27 +371,27 @@ export default function CheckoutPage() {
                   </div>
 
                   {/* 预计送达时间 */}
-                  <div className="p-4 bg-blue-50 rounded-xl">
-                    <div className="flex items-center text-blue-700 text-sm mb-1">
+                  <div className="p-4 bg-primary/50 backdrop-blur-sm">
+                    <div className="flex items-center text-black/90 text-sm mb-1">
                       <Clock className="w-4 h-4 mr-2" />
                       预计送达时间
                     </div>
-                    <p className="text-blue-600 font-medium">
+                    <p className="text-black/90 font-medium">
                       {deliveryMethods[selectedDelivery].time}
                     </p>
                   </div>
 
                   {/* 提交订单按钮 */}
-                  <Button 
+                  <Button
                     onClick={handleSubmitOrder}
                     disabled={isSubmitting || !selectedAddress}
-                    className="w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white h-12 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-black/90 hover:bg-black/70 text-white h-12 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg"
                   >
                     {isSubmitting ? '提交中...' : `提交订单 ¥${totalPrice.toFixed(2)}`}
                   </Button>
 
                   {!selectedAddress && (
-                    <div className="flex items-center text-amber-600 text-sm bg-amber-50 p-3 rounded-lg">
+                    <div className="flex items-center text-black/90 text-sm bg-primary/50 p-3 backdrop-blur-sm">
                       <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />
                       请先选择收货地址
                     </div>
@@ -484,10 +400,10 @@ export default function CheckoutPage() {
               </Card>
 
               {/* 安全保障 */}
-              <Card className="border-0 shadow-md">
+              <Card className="border-0 shadow-md bg-primary/50 backdrop-blur-sm">
                 <CardContent className="p-4">
                   <div className="space-y-3">
-                    <div className="flex items-center text-green-700 text-sm">
+                    <div className="flex items-center text-black/90 text-sm">
                       <Shield className="w-4 h-4 mr-2" />
                       <span className="font-medium">安全支付保障</span>
                     </div>
@@ -502,7 +418,7 @@ export default function CheckoutPage() {
               </Card>
 
               {/* 客服联系 */}
-              <Card className="border-0 shadow-md">
+              <Card className="border-0 shadow-md bg-primary/50 backdrop-blur-sm">
                 <CardContent className="p-4">
                   <div className="space-y-3">
                     <h4 className="font-medium text-gray-900">需要帮助？</h4>

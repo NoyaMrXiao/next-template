@@ -121,11 +121,11 @@ export function AllCategoriesClient({
   }, [selectedCategory, selectedSubcategory])
 
   return (
-    <div className="min-h-screen bg-white pt-16">
+    <div className="min-h-screen pt-16">
       <div className="flex">
         {/* 左侧分类导航 */}
         <aside className="hidden md:block w-80 h-screen sticky top-16 overflow-y-auto">
-          <div className="bg-white p-8">
+          <div className=" p-8">
             <div className="mb-8">
               <h2 className="text-lg font-bold text-gray-900 mb-2">{pageTitle}</h2>
               <p className="text-sm text-gray-600">
@@ -278,7 +278,7 @@ export function AllCategoriesClient({
           ) : (
             <div className={
               viewMode === 'grid'
-                ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
+                ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16'
                 : 'space-y-4'
             }>
               {filteredAndSortedProducts.map((product) => (
